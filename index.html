@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code セキュリティ設定ナビゲーター — 5分で安全な設定がわかる</title>
+<style>
+  @font-face {
+    font-family: AdjustedYuGothic;
+    font-weight: 400;
+    src: local("Yu Gothic Medium");
+  }
+  @font-face {
+    font-family: AdjustedYuGothic;
+    font-weight: 700;
+    src: local("Yu Gothic Bold");
+  }
+
+  :root {
+    --smarthr-blue: #00c4cc;
+    --product-main: #0077c7;
+    --danger: #e01e5a;
+    --warning: #ffcc17;
+    --text-link: #0071c1;
+    --orange-accent: #ff9900;
+    --text-black: #23221e;
+    --text-grey: #706d65;
+    --text-disabled: #c1bdb7;
+    --stone-01: #f8f7f6;
+    --stone-02: #edebe8;
+    --stone-03: #aaa69f;
+    --stone-04: #4e4c49;
+    --white: #ffffff;
+    --border: #d6d3d0;
+    --over-background: #f2f1f0;
+    --shadow-1: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-2: 0 4px 8px rgba(0,0,0,0.15);
+    --font-base: AdjustedYuGothic, "Yu Gothic", YuGothic, "Hiragino Sans", sans-serif;
+    --radius: 6px;
+    --space-xs: 4px;
+    --space-s: 8px;
+    --space-m: 16px;
+    --space-l: 24px;
+    --space-xl: 32px;
+    --space-xxl: 40px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--stone-01);
+    color: var(--text-black);
+    font-family: var(--font-base);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--space-xl); height: 56px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-brand {
+    font-size: 15px; font-weight: 700; color: var(--text-black);
+    text-decoration: none; display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--product-main), #005fa3);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-logo svg { width: 16px; height: 16px; fill: #fff; }
+  .nav-links { display: flex; gap: 24px; list-style: none; }
+  .nav-links a { font-size: 14px; color: var(--text-grey); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text-black); }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--product-main); color: #fff;
+    padding: 8px 20px; border-radius: var(--radius); border: none;
+    font-family: var(--font-base); font-size: 1rem; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: opacity 0.15s;
+    min-height: 44px;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary-sm {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--product-main); color: #fff;
+    padding: 6px 16px; border-radius: var(--radius); border: none;
+    font-family: var(--font-base); font-size: 14px; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-primary-sm:hover { opacity: 0.85; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: transparent; color: var(--product-main);
+    padding: 8px 20px; border-radius: var(--radius);
+    border: 1px solid var(--product-main);
+    font-family: var(--font-base); font-size: 1rem; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: background 0.15s;
+    min-height: 44px;
+  }
+  .btn-secondary:hover { background: var(--over-background); }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--white);
+    padding: 80px 32px 72px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--stone-01); border: 1px solid var(--border);
+    border-radius: 100px; padding: 4px 14px;
+    font-size: 0.857rem; color: var(--text-grey);
+    margin-bottom: 24px;
+  }
+  .hero-eyebrow .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--product-main); flex-shrink: 0;
+  }
+  .hero h1 {
+    font-size: 2rem; font-weight: 700; line-height: 1.25;
+    color: var(--text-black); margin-bottom: 20px;
+    max-width: 740px; margin-left: auto; margin-right: auto;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--product-main);
+  }
+  .hero-desc {
+    font-size: 1rem; color: var(--text-grey);
+    max-width: 560px; margin: 0 auto 36px; line-height: 1.75;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero-note {
+    margin-top: 20px; font-size: 0.75rem; color: var(--text-grey);
+    display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+  .hero-note span { display: flex; align-items: center; gap: 4px; }
+
+  /* ===== SECTION WRAPPERS ===== */
+  .section-white { background: var(--white); padding: 72px 32px; border-bottom: 1px solid var(--border); }
+  .section-stone { background: var(--stone-01); padding: 72px 32px; border-bottom: 1px solid var(--border); }
+  .section-dark { background: var(--text-black); padding: 72px 32px; }
+  .inner { max-width: 900px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 700; color: var(--text-grey);
+    text-transform: uppercase; letter-spacing: 0.1rem; margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 1.5rem; font-weight: 700; line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .section-lead {
+    font-size: 1rem; color: var(--text-grey); line-height: 1.75;
+    margin-bottom: 48px; max-width: 600px;
+  }
+
+  /* ===== PROBLEM ===== */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .problem-card {
+    background: var(--stone-01);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .problem-card .icon {
+    font-size: 1.5rem; margin-bottom: 10px;
+  }
+  .problem-card h3 { font-size: 0.857rem; font-weight: 700; margin-bottom: 6px; }
+  .problem-card p { font-size: 0.857rem; color: var(--text-grey); line-height: 1.5; }
+  .problem-arrow {
+    text-align: center; font-size: 1.5rem; color: var(--stone-03);
+    margin: 8px 0 24px;
+  }
+  .solution-banner {
+    background: linear-gradient(135deg, #e8f4fd, #f0f8ff);
+    border: 1px solid rgba(0,119,199,0.2);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .solution-banner .check-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--product-main);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .solution-banner .check-icon svg { width: 16px; height: 16px; stroke: #fff; fill: none; }
+  .solution-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .solution-banner p { font-size: 0.857rem; color: var(--text-grey); line-height: 1.5; }
+
+  /* ===== FEATURES ===== */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: box-shadow 0.2s;
+  }
+  .feature-card:hover { box-shadow: var(--shadow-1); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--stone-01); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; margin-bottom: 14px;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { font-size: 0.857rem; color: var(--text-grey); line-height: 1.5; }
+
+  /* ===== FLOW / HOW IT WORKS ===== */
+  .flow-wrapper { display: flex; flex-direction: column; gap: 0; }
+  .flow-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0 20px;
+    position: relative;
+  }
+  .flow-item:not(:last-child) .flow-line {
+    position: absolute;
+    left: 27px; top: 56px; bottom: -16px;
+    width: 2px;
+    background: var(--border);
+  }
+  .flow-step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--product-main);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 700; color: var(--product-main);
+    flex-shrink: 0; z-index: 1; position: relative;
+  }
+  .flow-content {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .flow-content h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .flow-content .flow-question { font-size: 0.857rem; color: var(--text-grey); margin-bottom: 12px; }
+  .flow-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .flow-choice {
+    display: inline-block;
+    background: var(--stone-01); border: 1px solid var(--border);
+    border-radius: 100px; padding: 4px 14px;
+    font-size: 0.857rem; color: var(--text-black);
+  }
+  .flow-choice.active {
+    background: rgba(0,119,199,0.08);
+    border-color: var(--product-main);
+    color: var(--product-main);
+    font-weight: 700;
+  }
+
+  /* ===== RESULT PREVIEW ===== */
+  .result-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-2);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .result-header {
+    background: var(--stone-02);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-header h3 { font-size: 0.857rem; font-weight: 700; color: var(--text-grey); }
+  .result-body { padding: 24px; }
+  .risk-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 100px;
+    font-size: 1rem; font-weight: 700; margin-bottom: 24px;
+  }
+  .risk-badge.medium {
+    background: rgba(255,204,23,0.15);
+    color: #856a00;
+    border: 1px solid rgba(255,204,23,0.5);
+  }
+  .result-items { display: flex; flex-direction: column; gap: 0; }
+  .result-item {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; border-top: 1px solid var(--border); padding: 14px 0;
+  }
+  .result-item:first-child { border-top: none; }
+  .result-item-label { font-size: 0.857rem; font-weight: 700; color: var(--text-grey); }
+  .result-item-value { font-size: 0.857rem; }
+  .result-item-value strong { font-weight: 700; color: var(--text-black); display: block; }
+  .result-item-value .reason { font-size: 0.75rem; color: var(--text-grey); margin-top: 2px; }
+  .advice-list { margin-top: 24px; padding: 16px 20px; background: rgba(255,204,23,0.08); border-radius: var(--radius); border: 1px solid rgba(255,204,23,0.3); }
+  .advice-list h4 { font-size: 0.857rem; font-weight: 700; margin-bottom: 10px; color: #856a00; }
+  .advice-list ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .advice-list li { font-size: 0.857rem; color: var(--text-black); display: flex; gap: 8px; }
+  .advice-list li::before { content: "・"; color: #856a00; flex-shrink: 0; }
+  .result-actions { padding: 16px 24px; background: var(--stone-01); border-top: 1px solid var(--border); display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ===== TARGET ===== */
+  .target-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .target-chip {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+  }
+  .target-chip .emoji { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+  .target-chip span { font-size: 0.857rem; font-weight: 700; color: var(--text-black); }
+
+  /* ===== CTA ===== */
+  .cta-section { background: var(--product-main); padding: 72px 32px; text-align: center; }
+  .cta-section h2 { font-size: 1.5rem; font-weight: 700; color: #fff; line-height: 1.25; margin-bottom: 14px; }
+  .cta-section p { font-size: 1rem; color: rgba(255,255,255,0.8); margin-bottom: 36px; }
+  .btn-white {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--product-main);
+    padding: 12px 28px; border-radius: var(--radius); border: none;
+    font-family: var(--font-base); font-size: 1rem; font-weight: 700;
+    text-decoration: none; cursor: pointer; transition: opacity 0.15s;
+    min-height: 44px;
+  }
+  .btn-white:hover { opacity: 0.9; }
+  .cta-note { margin-top: 16px; font-size: 0.857rem; color: rgba(255,255,255,0.65); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--stone-02);
+    padding: 32px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-grey);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ===== UTILITIES ===== */
+  .text-center { text-align: center; }
+  .mb-s { margin-bottom: var(--space-s); }
+  .mb-m { margin-bottom: var(--space-m); }
+  .mb-l { margin-bottom: var(--space-l); }
+  .mb-xl { margin-bottom: var(--space-xl); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 599px) {
+    .nav { padding: 0 16px; }
+    .nav-links { display: none; }
+    .hero { padding: 56px 20px 48px; }
+    .hero h1 { font-size: 1.5rem; }
+    .section-white, .section-stone, .section-dark { padding: 48px 20px; }
+    .cta-section { padding: 48px 20px; }
+    .flow-item { grid-template-columns: 44px 1fr; }
+    .flow-step-num { width: 44px; height: 44px; font-size: 0.857rem; }
+    .flow-item:not(:last-child) .flow-line { left: 21px; }
+    .result-item { grid-template-columns: 1fr; gap: 4px; }
+    .target-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 600px) and (max-width: 959px) {
+    .hero { padding: 64px 24px 56px; }
+    .hero h1 { font-size: 1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <span class="nav-logo">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+      </svg>
+    </span>
+    セキュリティ設定ナビ
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">課題</a></li>
+    <li><a href="#features">特徴</a></li>
+    <li><a href="#howto">使い方</a></li>
+    <li><a href="#result">結果イメージ</a></li>
+  </ul>
+  <a class="btn-primary-sm" href="#cta">診断を始める</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    非エンジニア向け Claude Code セキュリティ診断
+  </div>
+  <h1>
+    質問に答えるだけで、<br>
+    <em>あなたに合った安全設定</em>がわかる
+  </h1>
+  <p class="hero-desc">
+    Claude Code のセキュリティ設定は専門知識がないと難しい。<br>
+    このアプリなら、6つの質問に答えるだけで現在のリスクと推奨設定を確認できます。
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#cta">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      無料で診断を始める
+    </a>
+    <a class="btn-secondary" href="#howto">使い方を見る</a>
+  </div>
+  <div class="hero-note">
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--stone-03)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      診断時間：約5分
+    </span>
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--stone-03)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      登録不要・無料
+    </span>
+    <span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--stone-03)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      データ保存なし
+    </span>
+  </div>
+</section>
+
+<!-- ===== PROBLEM ===== -->
+<section class="section-stone" id="problem">
+  <div class="inner">
+    <div class="section-label">現状の課題</div>
+    <h2 class="section-title">こんなことで困っていませんか？</h2>
+    <p class="section-lead">Claude Code のセキュリティ設定は、専門知識がないと何をどう設定すればいいか判断が難しい。</p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">📖</div>
+        <h3>専門用語が多い</h3>
+        <p>「パーミッション」「CLI」「権限スコープ」など、意味がわからない言葉が並ぶ</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">❓</div>
+        <h3>何を選べば安全？</h3>
+        <p>設定項目がたくさんあって、どれが自分に必要なのか判断できない</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">😰</div>
+        <h3>誤設定が怖い</h3>
+        <p>間違えたら情報漏洩につながるかもと思うと、設定が怖くて手が止まる</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">🔍</div>
+        <h3>リスクが見えない</h3>
+        <p>今の設定が安全かどうか、どんなリスクがあるかが全くわからない</p>
+      </div>
+    </div>
+
+    <div class="problem-arrow">↓</div>
+
+    <div class="solution-banner">
+      <div class="check-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div>
+        <h3>セキュリティ設定ナビゲーターが解決します</h3>
+        <p>専門知識ゼロでも OK。質問に答えるだけで、現在のリスクレベルと推奨設定・設定手順をわかりやすく提示します。不安を感じることなく、安全に Claude Code を使い始められます。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section-white" id="features">
+  <div class="inner">
+    <div class="section-label">特徴</div>
+    <h2 class="section-title">専門知識ゼロで使える4つのポイント</h2>
+    <p class="section-lead">難しい言葉は一切使いません。小学生でもわかる言葉で、あなたに最適な設定を案内します。</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>選ぶだけで診断完了</h3>
+        <p>文字を入力する必要はありません。質問に対して選択肢を選ぶだけで、あなたに合った設定が導き出されます。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>リスクを3段階で可視化</h3>
+        <p>現在の設定が「安全」「要注意」「要見直し」のどのレベルか、一目でわかるように表示します。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>推奨理由も丁寧に説明</h3>
+        <p>「なぜこの設定が安全なのか」を必ず説明します。理由がわかるので、自分で判断できるようになります。</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>設定手順をPDF出力</h3>
+        <p>診断結果と設定手順をPDFで保存できます。後から見返したり、同僚と共有したりするときに便利です。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section-stone" id="howto">
+  <div class="inner">
+    <div class="section-label">使い方</div>
+    <h2 class="section-title">6つの質問に答えるだけ</h2>
+    <p class="section-lead">順番に選択肢を選んでいくだけで、あなたに最適なセキュリティ設定が完成します。</p>
+
+    <div class="flow-wrapper">
+
+      <div class="flow-item">
+        <div class="flow-line"></div>
+        <div class="flow-step-num">1</div>
+        <div class="flow-content">
+          <h3>利用目的を教えてください</h3>
+          <p class="flow-question">「Claude Code を何に使いますか？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice">個人学習</span>
+            <span class="flow-choice">趣味開発</span>
+            <span class="flow-choice active">業務利用</span>
+            <span class="flow-choice">顧客案件</span>
+            <span class="flow-choice">社内システム開発</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-line"></div>
+        <div class="flow-step-num">2</div>
+        <div class="flow-content">
+          <h3>扱うデータについて</h3>
+          <p class="flow-question">「機密情報を扱いますか？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice">扱わない</span>
+            <span class="flow-choice active">少し扱う</span>
+            <span class="flow-choice">頻繁に扱う</span>
+            <span class="flow-choice">分からない</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-line"></div>
+        <div class="flow-step-num">3</div>
+        <div class="flow-content">
+          <h3>コマンドの実行許可</h3>
+          <p class="flow-question">「AIによるコマンド実行をどこまで許可しますか？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice active">毎回確認したい</span>
+            <span class="flow-choice">基本確認したい</span>
+            <span class="flow-choice">よく使うものだけ自動許可</span>
+            <span class="flow-choice">すべて許可</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-line"></div>
+        <div class="flow-step-num">4</div>
+        <div class="flow-content">
+          <h3>ファイルアクセスの範囲</h3>
+          <p class="flow-question">「Claude Code がアクセスできる範囲は？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice active">作業フォルダのみ</span>
+            <span class="flow-choice">プロジェクト全体</span>
+            <span class="flow-choice">PC全体</span>
+            <span class="flow-choice">分からない</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-line"></div>
+        <div class="flow-step-num">5</div>
+        <div class="flow-content">
+          <h3>インターネット利用</h3>
+          <p class="flow-question">「Claude Code の外部通信を許可しますか？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice">不要</span>
+            <span class="flow-choice active">必要時のみ</span>
+            <span class="flow-choice">常時許可</span>
+            <span class="flow-choice">分からない</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-step-num">6</div>
+        <div class="flow-content">
+          <h3>Git 操作の許可範囲</h3>
+          <p class="flow-question">「AIによるGit操作を許可しますか？」</p>
+          <div class="flow-choices">
+            <span class="flow-choice">読み取りのみ</span>
+            <span class="flow-choice active">コミットまで</span>
+            <span class="flow-choice">Pushまで</span>
+            <span class="flow-choice">分からない</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESULT PREVIEW ===== -->
+<section class="section-white" id="result">
+  <div class="inner">
+    <div class="section-label">結果イメージ</div>
+    <h2 class="section-title">診断結果はこのように表示されます</h2>
+    <p class="section-lead">リスクレベル・推奨設定・理由・改善アドバイスを一画面でまとめて確認できます。</p>
+
+    <div class="result-card">
+      <div class="result-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-grey)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h3>あなたへの推奨設定レポート</h3>
+      </div>
+
+      <div class="result-body">
+        <div class="risk-badge medium">
+          🟡 中リスク — 注意が必要な設定が含まれています
+        </div>
+
+        <div class="result-items">
+          <div class="result-item">
+            <div class="result-item-label">コマンド実行</div>
+            <div class="result-item-value">
+              <strong>毎回確認（推奨）</strong>
+              <span class="reason">意図しないコマンド実行を防ぐため</span>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-item-label">ファイルアクセス</div>
+            <div class="result-item-value">
+              <strong>作業フォルダのみ（推奨）</strong>
+              <span class="reason">機密情報へのアクセスを最小限に抑えるため</span>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-item-label">外部通信</div>
+            <div class="result-item-value">
+              <strong>必要時のみ許可（適切）</strong>
+              <span class="reason">不必要な外部通信によるリスクを軽減できます</span>
+            </div>
+          </div>
+          <div class="result-item">
+            <div class="result-item-label">Git 操作</div>
+            <div class="result-item-value">
+              <strong>コミットまで（推奨）</strong>
+              <span class="reason">誤ったPushによるコード流出を防ぐため</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="advice-list">
+          <h4>改善アドバイス</h4>
+          <ul>
+            <li>業務利用のため、コマンド実行は「毎回確認」設定を強く推奨します</li>
+            <li>機密情報を含むフォルダは明示的にアクセス除外してください</li>
+            <li>Pushは必ず人間がレビューしてから行うようにしましょう</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <a class="btn-primary" href="#cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF で保存する
+        </a>
+        <a class="btn-secondary" href="#cta">もう一度診断する</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TARGET ===== -->
+<section class="section-stone">
+  <div class="inner text-center">
+    <div class="section-label">対象ユーザー</div>
+    <h2 class="section-title mb-m">こんな方に使っていただけます</h2>
+    <p class="section-lead" style="margin: 0 auto 36px;">プログラミングの知識は不要。Claude Code を使い始めた方・使いたい方ならどなたでも。</p>
+
+    <div class="target-grid">
+      <div class="target-chip">
+        <span class="emoji">🧑‍🎓</span>
+        <span>プログラミング<br>初心者</span>
+      </div>
+      <div class="target-chip">
+        <span class="emoji">🤖</span>
+        <span>AIツール<br>利用者</span>
+      </div>
+      <div class="target-chip">
+        <span class="emoji">💼</span>
+        <span>個人事業主</span>
+      </div>
+      <div class="target-chip">
+        <span class="emoji">🏢</span>
+        <span>会社員</span>
+      </div>
+      <div class="target-chip">
+        <span class="emoji">📚</span>
+        <span>学生</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section" id="cta">
+  <h2>今すぐ無料で診断してみましょう</h2>
+  <p>5分で完了。登録不要・データ保存なし。安全に使い始めるための第一歩を踏み出してください。</p>
+  <a class="btn-white" href="#">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--product-main)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    診断を始める（無料）
+  </a>
+  <p class="cta-note">専門知識は一切必要ありません</p>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>Claude Code セキュリティ設定ナビゲーター &copy; 2026</p>
+  <p style="margin-top: 6px;">デザイン: <a href="https://smarthr.design/" style="color:var(--text-link);">SmartHR Design System</a> に準拠</p>
+</footer>
+
+</body>
+</html>
